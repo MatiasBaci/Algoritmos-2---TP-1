@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-int main(string archivo_txt, string nombre_wav, int bits, long int sample_rate) {
+int main(string archivo_txt, string nombre_wav, int bit_depth, int sample_rate) {
     ifstream lectura(archivo_txt);
     ofstream escritura(nombre_wav);
     

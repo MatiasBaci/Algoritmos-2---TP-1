@@ -21,12 +21,11 @@ int distancia_semitonos(string nota){
 	
 	if nota != "H" {
 		
-		int octava = nota.back();
+		int octava = (int) nota.back();
 		nota.pop_back();
 		int distancia = 12 * (octava - 4);
 		
 		switch(nota){
-				case "H":  distancia = 0; break;
 				case "G#": distancia += 11; break;
 				case "G":  distancia += 10; break;
 				case "F#": distancia += 9; break;
@@ -123,4 +122,16 @@ void escribir_formato(archivo, int sample_rate) {
 	escribir(archivo, block_align, 2);
 	
 	escribir(archivo, bit_depth, 2);
+}
+
+
+void EndianSwap32(char c[]){
+	
+	unsigned char tmp;
+    tmp  = c[0];
+    c[0] = c[3];
+    c[3] = tmp;
+    tmp  = c[1];
+    c[1] = c[2];
+    c[2] = tmp;
 }
