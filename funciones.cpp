@@ -5,39 +5,31 @@
 #include <cmath>
 #include <fstream> // es necesario todo esto?
 using namespace std;
-const int FRECUENCIA_MUESTRAS = 44100;
+//const int FRECUENCIA_MUESTRAS = 44100;
 const float FREQ_A4 = 440;
-
-// f(x) = A sin(Bx+C) + D
-int frec_a_sonido(float A, float B, float &x, float C){ //x seria la x del muestreo anterior
-    int valor;
-    x = x + 1/FRECUENCIA_MUESTRAS; //Funciona asi?
-    valor = (int)(A*sin(B*x+C));
-    return valor;
-}
 
 
 int distancia_semitonos(string nota){
 	
-	if nota != "H" {
+	if (nota != "H") {
 		
 		int octava = (int) nota.back();
 		nota.pop_back();
 		int distancia = 12 * (octava - 4);
 		
 		switch(nota){
-				case "G#": distancia += 11; break;
-				case "G":  distancia += 10; break;
-				case "F#": distancia += 9; break;
-				case "F":  distancia += 8; break;
-				case "E":  distancia += 7; break;
-				case "D#": distancia += 6; break;
-				case "D":  distancia += 5; break;
-				case "C#": distancia += 4; break;
-				case "C":  distancia += 3; break;
 				case "B":  distancia += 2; break;
 				case "A#": distancia += 1; break;
 				case "A":  distancia += 0; break;
+				case "G#": distancia -= 1; break;
+				case "G":  distancia -= 2; break;
+				case "F#": distancia -= 3; break;
+				case "F":  distancia -= 4; break;
+				case "E":  distancia -= 5; break;
+				case "D#": distancia -= 6; break;
+				case "D":  distancia -= 7; break;
+				case "C#": distancia -= 8; break;
+				case "C":  distancia -= 9; break;
 		}
 		return distancia;
 	}
@@ -53,31 +45,51 @@ float nota_a_frecuencia(string nota){ //hacer que traduzca notas en ASPN a frecu
 }
 
 
-void leer_archivo(archivo, vector[]){ //aca quiero que lea 2 lineas de archivo y lo guarde en un vector.
+// f(x) = A sin(Bx+C) + D
+int frec_a_sonido(float amplitud, float freq, float &x, float defasaje, int sample_rate, int altura_segun_bitdepth){ //x seria la x del muestreo anterior
+    
+	int valor;
+    x = x + (float) (1 / sample_rate);
+    valor = (int) ( amplitud * sin ( freq * x + defasaje ) + altura_segun_bitdepth );
+    return valor;
+}
+
+
+float sonido(string nota, int duracion, float defasaje, float amplitud, int freq) {
+    frecuencia = nota_a_frecuencia(nota);
+    float x = 0;
+    while (x < (float) duracion) { //esto depende de las unidades de "duracion"
+        escribir_archivo(frec_a_sonido(amplitud, freq, x, defasaje));
+    }
+    defasaje = freq * x + defasaje;
+    return defasaje;
+}
+
+
+void musica(float amplitud, int sample_rate, int bit_depth, archivo) {
+	
+	string nota_y_duracion;
+
+	while getline(archivo, nota_y_duracion) {
+		
+		
+	}
+}
+
+
+void leer_archivo(string nota_y_duracion, vector[]) { //aca quiero que lea 2 lineas de archivo y lo guarde en un vector.
     //una linea para la nota y otra la duracion
-    string cadena;
     string nota;
     string duracion_str;
     int duracion;
     int separacion;
     
-    getline(archivo, cadena);
-    separacion = cadena.find(" ");
-    nota = cadena.substr(0, separacion-1);
-    duracion_str = cadena.substr(separacion+1, 10);
+    separacion = nota_y_duracion.find(" ");
+    nota = nota_y_duracion.substr(0, separacion-1);
+    duracion_str = nota_y_duracion.substr(separacion+1, 10);
     duracion = (int) duracion_str;
     vector[0] = nota;
     vector[1] = duracion;
-}
-
-
-float sonido(string nota, int duracion, float defasaje, float amplitud) {
-    frecuencia = nota_a_frecuencia(nota);
-    float x = 0;
-    while (x < (float) duracion) { //esto depende de las unidades de "duracion"
-        escribir_archivo(frec_a_sonido(amplitud, frecuencia, x, defasaje));
-    }
-    return defasaje;
 }
 
 
@@ -134,4 +146,11 @@ void EndianSwap32(char c[]){
     tmp  = c[1];
     c[1] = c[2];
     c[2] = tmp;
+}
+
+
+int tamanio_del_archivo(int duracion, ) {
+	
+	int tamanio = duracion * bit_depth * sample_rate;
+	return tamanio;
 }
