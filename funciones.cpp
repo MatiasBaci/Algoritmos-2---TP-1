@@ -1,12 +1,13 @@
 // funciones del programa
+#include "funciones.h"
 
 #include <sstream>
 #include <iostream>
 #include <string>
 #include <cmath>
 #include <fstream> // es necesario todo esto?
+
 using namespace std;
-const int A4 = 440;
 
 void validacion(int argc, char* argv[]){
     if (argc < 5)
@@ -21,11 +22,6 @@ void validacion(int argc, char* argv[]){
 
 
 
-
-typedef struct{  //deberia ir en .h
-    string nota;
-    int duracion;
-} nota_y_tiempo;
 
 
 // f(x) = A Sen(Bx+C)+D
