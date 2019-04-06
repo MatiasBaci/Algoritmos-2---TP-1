@@ -1,12 +1,15 @@
 // funciones del programa
 
+#include "funciones.h"
 #include <sstream>
 #include <iostream>
 #include <string>
 #include <cmath>
-#include <fstream> // es necesario todo esto?
+#include <fstream>
+
+
 using namespace std;
-const int A4 = 440;
+
 
 void validacion(int argc, char* argv[]){
     if (argc < 5)
@@ -19,20 +22,11 @@ void validacion(int argc, char* argv[]){
     }
 }
 
-
-
-
-typedef struct{  //deberia ir en .h
-    string nota;
-    int duracion;
-} nota_y_tiempo;
-
-
-// f(x) = A Sen(Bx+C)+D
+// f(x) = A Sen(2*PI*Bx+C)+D
 int frec_a_sonido(float A, float B, float &x, float C, float D, int frecuenciaMuestras){ //x seria la x del muestreo anterior
     int valor;
     x = x + (float)1/frecuenciaMuestras; //Funciona asi?
-    valor = (int)(A*sin(B*x+C)+D);
+    valor = (int)(A*sin(2*PI*B*x+C)+D);
     return valor;
 }
 
@@ -59,14 +53,14 @@ int leer_archivo(ifstream &inputFile, nota_y_tiempo &dato){
     return eof;
 }
 
-float sonido(nota_y_tiempo dato, float defasaje, float amplitud, float altura, ofstream wav, int frec_muestras, int bits){ //esto es medio pseudocodigo
-    float frecuencia;
-    frecuencia = nota_a_frecuencia(dato.nota);
+float sonido(nota_y_tiempo dato, float defasaje, float amplitud, float altura, ofstream &wav, int frec_muestras, int bits){ //esto es medio pseudocodigo
+    dato.frecuencia = nota_a_frecuencia(dato.nota);
     float x = 0;
     while(x < (float)dato.duracion){ //esto depende de las unidades de "duracion"
-        escribir_archivo(frec_a_sonido(amplitud, frecuencia, x, defasaje, altura, frec_muestras), wav, bits);
+        int valor = frec_a_sonido(amplitud, dato.frecuencia, x, defasaje, altura, frec_muestras);
+        escribir_archivo(valor, wav, bits, frec_muestras);
     } 
-    return frecuencia*x+defasaje;            
+    return dato.frecuencia*x+defasaje;            
     
 }
 
@@ -74,35 +68,31 @@ int salto_nota(string nota){
 	
 	if (nota != "H") {
 		
-		int octava = nota.back();
-		nota.pop_back();
+		int octava = nota[nota.length()-1] - '0'; //como los numeros en ascii empiezan en 48 (no en 0), asi puedo
+		                                        //obtener el numero en enteros correspondiente a la octava en la nota ej '2' - '0' es 50-48 que es 2
+		nota.erase(nota.length()-1);
 		int salto = 12 * (octava - 4);
 		
-		switch(nota){
-				case "G#": salto += -1; break;
-				case "G":  salto += -2; break;
-				case "F#": salto += -3; break;
-				case "F":  salto += -4; break;
-				case "E":  salto += -5; break;
-				case "D#": salto += -6; break;
-				case "D":  salto += -7; break;
-				case "C#": salto += -8; break;
-				case "C":  salto += -9; break;
-				case "B":  salto += 2; break;
-				case "A#": salto += 1; break;
-				case "A":  salto += 0; break;
-		}
+		if (nota == "B")        salto += 2;
+        else if (nota == "A#")  salto += 1;
+        else if (nota == "A")   salto += 0;
+        else if (nota == "G#") salto += -1;
+        else if (nota == "G")  salto += -2;
+        else if (nota == "F#") salto += -3;
+        else if (nota == "F")  salto += -4;
+        else if (nota == "E")  salto += -5;
+        else if (nota == "D#") salto += -6;
+        else if (nota == "D")  salto += -7;
+        else if (nota == "C#") salto += -8;
+        else                   salto += -9;
 		return salto;
 	}
 	else return 0;
 }
 
 
-void escribir_archivo(nota_y_tiempo dato, ofstream archivo, int bits, int frec_muestras){ //Deberia tomar algun parametro de posicion de la ultima linea del archivo? Devolver algo?
+void escribir_archivo(int valor, ofstream &archivo, int bits, int frec_muestras){ //Deberia tomar algun parametro de posicion de la ultima linea del archivo? Devolver algo?
     
-    do {
-        
-    }
     
 }
 
