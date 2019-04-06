@@ -1,4 +1,5 @@
 // funciones del programa
+#include "funciones.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -6,30 +7,47 @@
 #include <fstream> // es necesario todo esto?
 using namespace std;
 //const int FRECUENCIA_MUESTRAS = 44100;
-const float FREQ_A4 = 440;
-const int MASCARA = 255;
+//const float FREQ_A4 = 440;
+//const int MASCARA = 255;
+
+
+//void obtener_nota(string nota_y_duracion, string *vector[]) {
+//    
+//    string nota;
+//    string duracion_str;
+//    int duracion;
+//    int separacion;
+//    
+//    separacion = nota_y_duracion.find(" ");
+//    nota = nota_y_duracion.substr(0, separacion - 1);
+//    duracion_str = nota_y_duracion.substr(separacion + 1);
+//    duracion = string_a_int(duracion_str);
+//    vector[0] = nota;
+//    vector[1] = duracion_str;
+//}
 
 
 int distancia_semitonos(string nota){
 			
-	int octava = (int) nota.back();
-	nota.pop_back();
+	//int octava = (int) nota.back();
+	int octava = nota[nota.length()-1] - 48;
+	//nota.pop_back();
+	nota.erase(nota.length()-1);
 	int distancia = 12 * (octava - 4);
+			
+	if 		(nota == "B")  distancia += 2;
+	else if (nota == "A#") distancia += 1;
+	else if (nota == "A")  distancia += 0;
+	else if (nota == "G#") distancia -= 1;
+	else if (nota == "G")  distancia -= 2;
+	else if (nota == "F#") distancia -= 3;
+	else if (nota == "F")  distancia -= 4;
+	else if (nota == "E")  distancia -= 5;
+	else if (nota == "D#") distancia -= 6;
+	else if (nota == "D")  distancia -= 7;
+	else if (nota == "C#") distancia -= 8;
+	else if (nota == "C")  distancia -= 9;
 	
-	switch(nota){
-			case "B":  distancia += 2; break;
-			case "A#": distancia += 1; break;
-			case "A":  distancia += 0; break;
-			case "G#": distancia -= 1; break;
-			case "G":  distancia -= 2; break;
-			case "F#": distancia -= 3; break;
-			case "F":  distancia -= 4; break;
-			case "E":  distancia -= 5; break;
-			case "D#": distancia -= 6; break;
-			case "D":  distancia -= 7; break;
-			case "C#": distancia -= 8; break;
-			case "C":  distancia -= 9; break;
-	}
 	return distancia;
 }
 
@@ -51,85 +69,29 @@ float nota_a_frecuencia(string nota){ //hacer que traduzca notas en ASPN a frecu
 
 
 // f(x) = A sin(Bt+C) + D
-int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int sample_rate, int altura_segun_bitdepth){ //x seria la x del muestreo anterior
+int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int sample_rate, int bit_depth){ //x seria la x del muestreo anterior
     
-	int valor;
+	int altura = 0;
+	if (bit_depth == 8) altura = amplitud;
 	
     t = t + (float) (1 / sample_rate);
-    valor = (int) ( amplitud * sin ( freq * t + defasaje ) + altura_segun_bitdepth );
+    
+    int valor = (int) ( amplitud * sin ( freq * t * 2 * 3.141592 + defasaje ) + altura );
     return valor;
 }
 
 
-float sonido(ofstream archivo_wav, string nota, int duracion, float defasaje, float amplitud) {
-    
-	float freq;
-	freq = nota_a_frecuencia(nota);
+int string_a_int(string cadena) {
 	
-	float t = 0;	
-	while (t < (float) duracion) {
-        escribir(archivo_wav, frec_a_sonido(amplitud, freq, t, defasaje, sample_rate, altura_segun_bitdepth), 4);
-    }
-	defasaje = freq * t + defasaje;
-    return defasaje;
-}
-
-
-void musica(ifstream archivo_txt, ofstream archivo_wav, float amplitud, int sample_rate, int bit_depth) {
-	
-	string nota_y_duracion;
-	string nota;
-	int duracion;
 	stringstream ss;
-	string vector[2];
-	float defasaje = 0;
-	
-	while (getline(archivo_txt, nota_y_duracion)) {
-		
-		obtener_nota(nota_y_duracion, &vector[]);
-		
-		ss << vector[1];
-		ss >> duracion;
-		
-		nota = vector[0];
-		
-		defasaje = sonido(archivo_wav, nota, duracion, defasaje, amplitud)
-	}
-}
-
-
-void obtener_nota(string nota_y_duracion, string &vector[]) {
-    
-    string nota;
-    string duracion_str;
-    int duracion;
-    int separacion;
-    
-    separacion = nota_y_duracion.find(" ");
-    nota = nota_y_duracion.substr(0, separacion - 1);
-    duracion_str = nota_y_duracion.substr(separacion + 1);
-    duracion = (int) duracion_str;
-    vector[0] = nota;
-    vector[1] = duracion_str;
-}
-
-
-int leer_int(ifstream archivo_txt) {
-
-	string aux;
-    getline(archivo_txt, aux);
-    
-    stringstream ss;
-    ss << aux;
-    
+	ss << cadena;
     int entero;
     ss >> entero;
-    
     return entero;
 }
 
 
-void escribir(ofstream archivo_wav, int valor, int bit_depth) {
+void escribir(ofstream &archivo_wav, int valor, int bit_depth) {
     
 	int resultado;
 	char c;
@@ -145,6 +107,78 @@ void escribir(ofstream archivo_wav, int valor, int bit_depth) {
 }
 
 
+float sonido(ofstream& archivo_wav, string nota, int duracion, float defasaje, float amplitud, int sample_rate, int bit_depth) {
+    
+	float freq;
+	freq = nota_a_frecuencia(nota);
+	
+	float t = 0;	
+	while (t < (float) duracion) {
+        escribir(archivo_wav, frec_a_sonido(amplitud, freq, t, defasaje, sample_rate, bit_depth), 4);
+    }
+	defasaje = freq * t + defasaje;
+    return defasaje;
+}
+
+
+void musica(ifstream& archivo_txt, ofstream& archivo_wav, float amplitud, int sample_rate, int bit_depth) {
+	
+	string nota_y_duracion;
+	string nota;
+	int duracion;
+	stringstream ss;
+	//string vector[2];
+	float defasaje = 0;
+	
+	while (getline(archivo_txt, nota_y_duracion)) {
+		
+		//obtener_nota(nota_y_duracion, vector);
+		//string nota;
+	    string duracion_str;
+	    //int duracion;
+	    int separacion;
+	    
+	    separacion = nota_y_duracion.find(" ");
+	    nota = nota_y_duracion.substr(0, separacion - 1);
+	    duracion_str = nota_y_duracion.substr(separacion + 1);
+	    duracion = string_a_int(duracion_str);
+//	    vector[0] = nota;
+//	    vector[1] = duracion_str;
+		
+		//ss << vector[1];
+		ss << nota;
+		ss >> duracion;
+		
+		//nota = vector[0];
+		
+		defasaje = sonido(archivo_wav, nota, duracion, defasaje, amplitud, sample_rate, bit_depth);
+	}
+}
+
+
+int leer_int(ifstream& archivo_txt) {
+
+	string aux;
+    getline(archivo_txt, aux);
+    
+    int entero;
+	entero = string_a_int(aux);
+    
+    return entero;
+}
+
+
+void escribir_str(ofstream &archivo_wav, string valor) {
+	
+	char p[valor.length()]; 
+	
+	for (int i = 0; i < sizeof(p); i++) {
+		p[i] = valor[3-i];
+		archivo_wav << p[i];
+	}
+}
+
+
 int string_to_hex(string cadena) {
     unsigned int x;   
     std::stringstream ss;
@@ -154,50 +188,51 @@ int string_to_hex(string cadena) {
 }
 
 
-void escribir_chunk_header(ifstream archivo_txt, int duracion_archivo, int bit_depth, int sample_rate) {
+void escribir_chunk_header(ofstream &archivo_wav, int duracion_archivo, int bit_depth, int sample_rate) {
 	
-	escribir(archivo_txt, "RIFF", 4);
+	escribir_str(archivo_wav, "RIFF");
 	
 	int tamanio_desde_byte8;
-	tamanio_desde_byte8 = tamanio_del_archivo(duracion_archivo, bit_depth, sample_rate) - 8;
-	escribir(archivo_txt, tamanio_desde_byte8, 4);
+	tamanio_desde_byte8 = tamanio_data(duracion_archivo, bit_depth, sample_rate) + 36;
+	escribir(archivo_wav, tamanio_desde_byte8, 32);
 	
-	escribir(archivo_txt, "WAVE", 4);
+	escribir_str(archivo_wav, "WAVE");
 }
 
-void escribir_chunk_formato(archivo_txt, int bit_depth, int sample_rate) {
+
+void escribir_chunk_formato(ofstream &archivo_wav, int bit_depth, int sample_rate) {
 	
-	escribir(archivo_txt, "fmt ", 4);
+	escribir_str(archivo_wav, "fmt ");
 	
-	escribir(archivo_txt, 16);
+	escribir(archivo_wav, 16, 32);
 	
 	int formato_del_audio = 1; //1 = sin compresion
-	escribir(archivo_txt, formato_del_audio);
+	escribir(archivo_wav, formato_del_audio, 16);
 	
 	int cantidad_de_canales = 1; //1 = mono
-	escribir(archivo_txt, cantidad_de_canales);
+	escribir(archivo_wav, cantidad_de_canales, 16), bit_depth;
 	
-	escribir(archivo_txt, sample_rate);
+	escribir(archivo_wav, sample_rate, 32);
 	
 	int byte_rate = sample_rate * cantidad_de_canales * bit_depth / 8;
-	escribir(archivo_txt, byte_rate;
+	escribir(archivo_wav, byte_rate, 32);
 	
 	int block_align = cantidad_de_canales * bit_depth / 8;
-	escribir(archivo_txt, block_align);
+	escribir(archivo_wav, block_align, 16);
 	
-	escribir(archivo_txt, bit_depth);
+	escribir(archivo_wav, bit_depth, 16);
 }
 
 
-void escribir_chunk_data(float amplitud, int sample_rate, int bit_depth, archivo, int tamanio_archivo) {
+void escribir_chunk_data(ifstream &archivo_txt, ofstream &archivo_wav, float amplitud, int sample_rate, int bit_depth, int duracion_archivo) {
 
-	escribir(archivo, "data", 4);
+	escribir_str(archivo_wav, "data");
 	
 	int tamanio_datos_n;
-	tamanio_datos_n = tamanio_archivo - 52;
-	escribir(archivo, tamanio_datos_n);
+	tamanio_datos_n = tamanio_data(duracion_archivo, bit_depth, 32);
+	escribir(archivo_wav, tamanio_datos_n, bit_depth);
 	
-	musica(amplitud, sample_rate, bit_depth, archivo);
+	musica(archivo_txt, archivo_wav, amplitud, sample_rate, bit_depth);
 }
 
 
@@ -213,7 +248,7 @@ void EndianSwap32(char c[]) {
 }
 
 
-int tamanio_del_archivo(int duracion_archivo, int bit_depth, int sample_rate) {
+int tamanio_data(int duracion_archivo, int bit_depth, int sample_rate) {
 	
 	int tamanio = duracion_archivo * bit_depth * sample_rate;
 	return tamanio;
