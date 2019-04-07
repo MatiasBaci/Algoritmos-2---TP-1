@@ -7,7 +7,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    //validacion(argc, argv); //valida los parametros ingresados por consola
+    validacion(argc,argv); //valida los parametros ingresados por consola
     const char * path_partitura = argv[1];
     const char * path_cancion = argv[2];
     stringstream aux; int bits; int frec_muestras;
