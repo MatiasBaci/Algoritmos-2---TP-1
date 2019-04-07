@@ -19,6 +19,8 @@ typedef struct{
 
 void validacion(int argc, char* argv[]);
 
+void amplitud_y_altura(float &A, float &D, int bits);
+
 int frec_a_sonido(float A, float B, float &x, float C, float D, int frecuenciaMuestras);
 
 float nota_a_frecuencia(std::string nota);
@@ -29,7 +31,11 @@ float sonido(nota_y_tiempo dato, float defasaje, float amplitud, float altura, s
 
 int salto_nota(std::string nota);
 
-void escribir_archivo(int valor, std::ofstream &archivo, int bits, int frec_muestras);
+void header_y_formato(int duracion_tot, std::ofstream &archivo, int bits, int frec_muestras);
+
+void little(int valor, int bytes, std::ofstream &archivo);
+
+void wav(int valor, std::ofstream &archivo, int bits);
 
 
 
