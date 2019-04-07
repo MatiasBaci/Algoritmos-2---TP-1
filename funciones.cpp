@@ -60,7 +60,7 @@ float nota_a_frecuencia(string nota){ //hacer que traduzca notas en ASPN a frecu
     	
 		int distancia;
     	distancia = distancia_semitonos(nota); //la distancia de semitonos entre la nota y A4
-	    freq = FREQ_A4 * pow(2, (distancia / 12));
+	    freq = FREQ_A4 * pow(2, (float) distancia / 12 );
 	}
 	else freq = 0; //silencio
 		
@@ -69,12 +69,12 @@ float nota_a_frecuencia(string nota){ //hacer que traduzca notas en ASPN a frecu
 
 
 // f(x) = A sin(Bt+C) + D
-int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int sample_rate, int bit_depth){ //x seria la x del muestreo anterior
+int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int sample_rate, int bit_depth) { //x seria la x del muestreo anterior
     
 	int altura = 0;
 	if (bit_depth == 8) altura = amplitud;
 	
-    t = t + (float) (1 / sample_rate);
+    t = t + (float) (1 / (float) sample_rate);
     
     int valor = (int) ( amplitud * sin ( freq * t * 2 * 3.141592 + defasaje ) + altura );
     return valor;
@@ -102,6 +102,9 @@ void escribir(ofstream &archivo_wav, int valor, int bit_depth) {
 		resultado = valor & MASCARA;
 		c = (char) resultado;
 		archivo_wav << c;
+		//
+		cout << c;
+		//
 	    valor = valor >> 8;
 	}
 }
@@ -114,7 +117,7 @@ float sonido(ofstream& archivo_wav, string nota, int duracion, float defasaje, f
 	
 	float t = 0;	
 	while (t < (float) duracion) {
-        escribir(archivo_wav, frec_a_sonido(amplitud, freq, t, defasaje, sample_rate, bit_depth), 4);
+        escribir(archivo_wav, frec_a_sonido(amplitud, freq, t, defasaje, sample_rate, bit_depth), bit_depth);
     }
 	defasaje = freq * t + defasaje;
     return defasaje;
@@ -138,16 +141,16 @@ void musica(ifstream& archivo_txt, ofstream& archivo_wav, float amplitud, int sa
 	    //int duracion;
 	    int separacion;
 	    
-	    separacion = nota_y_duracion.find(" ");
-	    nota = nota_y_duracion.substr(0, separacion - 1);
-	    duracion_str = nota_y_duracion.substr(separacion + 1);
+	    separacion = nota_y_duracion.find("\t");
+	    nota = nota_y_duracion.substr(0, separacion);
+	    duracion_str = nota_y_duracion.substr(separacion);
 	    duracion = string_a_int(duracion_str);
 //	    vector[0] = nota;
 //	    vector[1] = duracion_str;
 		
 		//ss << vector[1];
-		ss << nota;
-		ss >> duracion;
+		//ss << nota;
+		//ss >> duracion;
 		
 		//nota = vector[0];
 		
@@ -250,6 +253,6 @@ void EndianSwap32(char c[]) {
 
 int tamanio_data(int duracion_archivo, int bit_depth, int sample_rate) {
 	
-	int tamanio = duracion_archivo * bit_depth * sample_rate;
+	int tamanio = (int) ( (float) duracion_archivo * (float) bit_depth / 8 * (float) sample_rate );
 	return tamanio;
 }

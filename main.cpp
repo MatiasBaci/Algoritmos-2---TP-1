@@ -12,7 +12,7 @@ using namespace std;
 //int main(int argc, char* argv[]) {
 int main() {
 	
-	string argv[] = {"ejemplo.txt", "carlos.wav", "8" , "44100"};
+	//string argv[] = {"ejemplo.txt", "carlos.wav", "8" , "44100"};
 	
 	//const char* nombre_txt = argv[0];
 	//const char* nombre_wav = argv[1];
@@ -42,7 +42,7 @@ int main() {
     
     escribir_chunk_formato(archivo_wav, bit_depth, sample_rate);
     
-    float amplitud = 128; //fucking que se yo. es igual para todas las notas?
+    float amplitud = 127; //fucking que se yo. es igual para todas las notas?
 	
 	escribir_chunk_data(archivo_txt, archivo_wav, amplitud, sample_rate, bit_depth, duracion_archivo);
 	
