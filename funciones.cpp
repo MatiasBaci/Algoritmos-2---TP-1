@@ -7,7 +7,7 @@
 #include <string>
 #include <cmath>
 #include <fstream>
-
+const float volumen = 1;
 
 using namespace std;
 
@@ -30,15 +30,15 @@ void validacion(int argc, char* argv[]){
 void amplitud_y_altura(float &A, float &D, int bits){
     if (bits == 8){A = 127; D = 128;}
     else if (bits == 16){A = 32767; D = 0;}
-    else {A = 65535; D = 0;}
+    else {A = pow(2,31); D = 0;}
 }
 
 // f(x) = A Sen(2*PI*Bx+C)+D
 int frec_a_sonido(float A, float B, float &x, float C, float D, int frecuenciaMuestras){ //x seria la x del muestreo anterior
     int valor;
     x = x + (float)1/frecuenciaMuestras;
-    valor = A*sin(2*PI*B*x+C)+D;
-    return valor;
+    valor = volumen*A*sin(2*PI*B*x+C);
+    return valor+D;
 }
 
 float nota_a_frecuencia(string nota){

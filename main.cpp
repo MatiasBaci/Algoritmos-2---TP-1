@@ -6,6 +6,7 @@
 #include "funciones.h"
 using namespace std;
 
+
 int main(int argc, char* argv[]) {
     validacion(argc,argv); //valida los parametros ingresados por consola
     const char * path_partitura = argv[1];
@@ -30,6 +31,7 @@ int main(int argc, char* argv[]) {
     while (leer_archivo(partitura, dato)){
         dato.frecuencia = nota_a_frecuencia(dato.nota);
         defasaje = sonido(dato, defasaje, amplitud, altura, cancion, frec_muestras, bits);
+        defasaje = fmod(defasaje, 2*PI);
     }
 
 
