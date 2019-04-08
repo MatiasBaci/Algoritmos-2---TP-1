@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     int duracion_archivo;
     duracion_archivo = leer_duracion(archivo_txt);
     float amplitud;
-    amplitud = pow ( 2 , bit_depth - 1 );
+    amplitud = pow ( 2 , bit_depth - 1 ) - 1;
 	
     escribir_chunk_header(archivo_wav, duracion_archivo, bit_depth, sample_rate);
     escribir_chunk_formato(archivo_wav, bit_depth, sample_rate);

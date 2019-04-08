@@ -182,6 +182,8 @@ int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int samp
 // f(t) = A sin( B t + C ) + D
 	int altura = 0;
 	if (bit_depth == 8) altura = amplitud;
+	float volumen = 0.5;
+	amplitud *= volumen;
 	
     t = t + (float) (1 / (float) sample_rate);
     
