@@ -23,7 +23,7 @@ int main() {
 //	int bit_depth;
 //	ss << argv[2];
 //	ss >> bit_depth;
-	int bit_depth = 8;
+	int bit_depth = 16;
 //	int sample_rate;
 //	ss << argv[3];
 //	ss >> sample_rate;

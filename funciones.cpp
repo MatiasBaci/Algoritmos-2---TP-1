@@ -76,7 +76,7 @@ int frec_a_sonido(float amplitud, float freq, float &t, float defasaje, int samp
 	
     t = t + (float) (1 / (float) sample_rate);
     
-    int valor = (int) ( amplitud * sin ( freq * t * 2 * 3.141592 + defasaje ) + altura );
+    int valor = (int) ( amplitud * sin ( 2 * 3.141592 * freq * t + defasaje ) + altura );
     return valor;
 }
 
@@ -103,7 +103,7 @@ void escribir(ofstream &archivo_wav, int valor, int bit_depth) {
 		c = (char) resultado;
 		archivo_wav << c;
 		//
-		cout << c;
+		//cout << c;
 		//
 	    valor = valor >> 8;
 	}
@@ -116,10 +116,10 @@ float sonido(ofstream& archivo_wav, string nota, int duracion, float defasaje, f
 	freq = nota_a_frecuencia(nota);
 	
 	float t = 0;	
-	while (t < (float) duracion) {
+	while (t < (float) duracion / 1000) {
         escribir(archivo_wav, frec_a_sonido(amplitud, freq, t, defasaje, sample_rate, bit_depth), bit_depth);
     }
-	defasaje = freq * t + defasaje;
+	defasaje = 2 * 3.141592 * freq * t + defasaje;
     return defasaje;
 }
 
