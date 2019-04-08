@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
     aux << linea;    
     int duracion; aux >> duracion;
     
-    float amplitud, defasaje, altura;
-    amplitud_y_altura(amplitud, altura, bits);
+    float volumen, amplitud, defasaje, altura;
+    amplitud_y_altura(volumen, amplitud, altura, bits);
     defasaje = 0;
     
     nota_y_tiempo dato;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     header_y_formato(duracion, cancion, bits, frec_muestras);
     while (leer_archivo(partitura, dato)){
         dato.frecuencia = nota_a_frecuencia(dato.nota);
-        defasaje = sonido(dato, defasaje, amplitud, altura, cancion, frec_muestras, bits);
+        defasaje = sonido(dato, volumen, defasaje, amplitud, altura, cancion, frec_muestras, bits);
         defasaje = fmod(defasaje, 2*PI);
     }
 

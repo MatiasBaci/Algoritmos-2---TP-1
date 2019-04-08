@@ -19,15 +19,15 @@ typedef struct{
 
 void validacion(int argc, char* argv[]);
 
-void amplitud_y_altura(float &A, float &D, int bits);
+void amplitud_y_altura(float &vol, float &A, float &D, int bits);
 
-int frec_a_sonido(float A, float B, float &x, float C, float D, int frecuenciaMuestras);
+int frec_a_sonido(float volumen, float A, float B, float &x, float C, float D, int frecuenciaMuestras);
 
 float nota_a_frecuencia(std::string nota);
 
 int leer_archivo(std::ifstream &inputFile, nota_y_tiempo &dato);
 
-float sonido(nota_y_tiempo dato, float defasaje, float amplitud, float altura, std::ofstream &wav, int frec_muestras, int bits);
+float sonido(nota_y_tiempo dato, float volumen, float defasaje, float amplitud, float altura, std::ofstream &wav, int frec_muestras, int bits);
 
 int salto_nota(std::string nota);
 

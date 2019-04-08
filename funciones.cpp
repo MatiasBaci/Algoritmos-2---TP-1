@@ -7,7 +7,7 @@
 #include <string>
 #include <cmath>
 #include <fstream>
-const float volumen = 1;
+const float volumen = 0.1;
 
 using namespace std;
 
@@ -27,14 +27,14 @@ void validacion(int argc, char* argv[]){
     }
 }
 
-void amplitud_y_altura(float &A, float &D, int bits){
-    if (bits == 8){A = 127; D = 128;}
-    else if (bits == 16){A = 32767; D = 0;}
-    else {A = pow(2,31); D = 0;}
+void amplitud_y_altura(float &vol, float &A, float &D, int bits){
+    if (bits == 8){vol = 0.1; A = 127; D = 128;}
+    else if (bits == 16){vol = 0.01; A = 32767; D = 0;}
+    else {vol = 0.001; A = pow(2,31); D = 0;}
 }
 
 // f(x) = A Sen(2*PI*Bx+C)+D
-int frec_a_sonido(float A, float B, float &x, float C, float D, int frecuenciaMuestras){ //x seria la x del muestreo anterior
+int frec_a_sonido(float volumen, float A, float B, float &x, float C, float D, int frecuenciaMuestras){ //x seria la x del muestreo anterior
     int valor;
     x = x + (float)1/frecuenciaMuestras;
     valor = volumen*A*sin(2*PI*B*x+C);
@@ -64,11 +64,11 @@ int leer_archivo(ifstream &inputFile, nota_y_tiempo &dato){
     return eof;
 }
 
-float sonido(nota_y_tiempo dato, float defasaje, float amplitud, float altura, ofstream &archivo_wav, int frec_muestras, int bits){
+float sonido(nota_y_tiempo dato, float volumen, float defasaje, float amplitud, float altura, ofstream &archivo_wav, int frec_muestras, int bits){
     dato.frecuencia = nota_a_frecuencia(dato.nota);
     float x = 0;
     while(x < (float)dato.duracion/1000){ //esto depende de las unidades de "duracion"
-        int valor = frec_a_sonido(amplitud, dato.frecuencia, x, defasaje, altura, frec_muestras);
+        int valor = frec_a_sonido(volumen, amplitud, dato.frecuencia, x, defasaje, altura, frec_muestras);
         wav(valor, archivo_wav, bits);
     } 
     return 2*PI*dato.frecuencia*x+defasaje;            
