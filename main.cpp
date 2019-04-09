@@ -18,6 +18,10 @@ int main(int argc, char* argv[]) {
 	ss << argv[4];
 	ss >> sample_rate;
 	ss.clear(); ss.str("");
+	if (sample_rate < 8000) {
+		cout << "Muestras/segundo es invalido.";
+		return 0;
+	}
 	
     ifstream archivo_txt(nombre_txt);
     ofstream archivo_wav(nombre_wav);
